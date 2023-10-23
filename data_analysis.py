@@ -36,7 +36,7 @@ def fitness_func(ga_instance, solution, solution_idx):
             score=logistic(estimated_outcome,desired_outcome[i])
             
         if comp:
-            fitness=fitness+score
+            fitness=fitness+score*(1/10)
         else:
             fitness=fitness*score
     return fitness

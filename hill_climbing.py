@@ -8,9 +8,6 @@ Created on Fri Oct 20 11:41:54 2023
 import read_functions as rdf
 import math
 from scipy.special import expit
-import itertools
-import random as rand
-import pandas as pd
 import numpy as np
 
 ######################## User Defined Functions ###############################
@@ -31,7 +28,7 @@ def fitness_func(ga_instance, solution, solution_idx):
             score=logistic(estimated_outcome,desired_outcome[i])
             
         if comp:
-            fitness=fitness+score
+            fitness=fitness+score*(1/10)
         else:
             fitness=fitness*score
     return fitness
@@ -70,11 +67,18 @@ def soft_skill_estimation_mean(thresholds,courses_effects,theta,solution,soft_sk
     expected_outcome=1*p_1+2*p_2+3*p_3+4*p_4
     return expected_outcome
 
-def generate_random_combination(combination,possible_courses,N_courses_followed):
+def generate_random_combination(possible_courses,N_courses_followed):
+    combination=[]
+    while len(combination)<N_courses_followed:
+        random_course=np.random.choice(possible_courses)
+        if np.where(random_course==combination)[0].size==0:
+            combination.append(random_course)
+    return combination
+
+def generate_neighbor(combination,possible_courses,N_courses_followed):
     if combination is None:
-        possible_combinations=list(itertools.combinations(possible_courses, N_courses_followed))
-        current_solution=rand.sample(possible_combinations,k=1)
-        return list(current_solution[0])
+        current_solution=generate_random_combination(possible_courses,N_courses_followed)
+        return current_solution
     flag=False
     count=0
     random_course=np.random.choice(possible_courses)
@@ -96,27 +100,22 @@ def generate_random_combination(combination,possible_courses,N_courses_followed)
 def hill_climbing(objective_function, generate_neighbor, stopping_criterion,possible_courses,N_courses_followed):
     current_solution=generate_neighbor(None,possible_courses,N_courses_followed)
     cont=0
-    flag=False
-    cont_flag=stopping_criterion
+    flag=stopping_criterion
     #print(current_solution)
-    while cont_flag>0:
-        
+    while flag>0:        
         current_fitness=objective_function(None,current_solution,0)
         potential_solution=generate_neighbor(current_solution,possible_courses,N_courses_followed)
         potential_fitness=objective_function(None,potential_solution,0)
         if potential_fitness>current_fitness:
             current_solution=potential_solution
-            cont_flag=5
+            flag=stopping_criterion
         else:
-            cont_flag=cont_flag-1
+            flag=flag-1
         cont+=1
+        #print(cont)
     print(cont)
     return current_solution
 
-#def stopping_criterion(objective_function,solution): 
-#    if objective_function(None,solution,0)>6.2562:
-#        return True
-#    return False 
 
 ################## End of  User Defined Functions #############################
 
@@ -128,15 +127,15 @@ real_data_stage2=real_data.loc[real_data["stage"]==2]
 real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]>5]
 real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]<12]
 #Domain 1: EE
-real_data_stage2=real_data_stage2.loc[real_data_stage2["domain_id"]==1]
+real_data_stage2=real_data_stage2.loc[real_data_stage2["domain_id"]==4]
 real_data_stage2=real_data_stage2.reset_index(drop=True)
 #Thresholds
 thresholds=rdf.get_thresholds()
 #Course Effects
 courses_effects=rdf.get_courses_effects()
-student_id=real_data_stage2.iloc[0,0]
-domain_id=real_data_stage2.iloc[0,26]
-N_courses_followed=real_data_stage2.iloc[0,25]
+student_id=real_data_stage2.iloc[8,0]
+domain_id=real_data_stage2.iloc[8,26]
+N_courses_followed=real_data_stage2.iloc[8,25]
 min_skill=1#Minimum Soft skill proficiency
 max_skill=4#Maximum Soft skill proficiency
 #Compensatory boolean variable
@@ -150,12 +149,11 @@ theta=rdf.get_student_random_effect(student_id)
 desired_outcome=rdf.get_desired_standard(domain_id)
 #get possible courses
 possible_courses=rdf.get_courses_domain(domain_id)
-calculation_time=pd.DataFrame(np.zeros(shape=(100,4)))
-calculation_time.columns=['trial','fitness','time(s)','Ncombs']
-#sol=hill_climbing(fitness_func,generate_random_combination,stopping_criterion,possible_courses,N_courses_followed)
-#sol.sort()
-#print(sol)
-#print(fitness_func(None,sol,0))
+
+sol=hill_climbing(fitness_func,generate_neighbor,100,possible_courses,N_courses_followed)
+sol.sort()
+print(sol)
+print(fitness_func(None,sol,0))
 
 
 

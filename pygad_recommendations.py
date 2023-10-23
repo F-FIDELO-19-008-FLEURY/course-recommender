@@ -30,7 +30,7 @@ def fitness_func(ga_instance, solution, solution_idx):
             score=logistic(estimated_outcome,desired_outcome[i])
             
         if comp:
-            fitness=fitness+score
+            fitness=fitness+score*(1/10)
         else:
             fitness=fitness*score
     return fitness
@@ -103,7 +103,7 @@ def spcrossover_func(parents, offspring_size, ga_instance):
 ### Function that performs uniform crossover between two parent combinations
 ### maintaining the constraint of different followed courses
 def unifcrossover_func(parents, offspring_size, ga_instance):  
-    #print("crossover")
+    print("crossover")
     weights=[ga_instance.crossover_probability,1-ga_instance.crossover_probability]
     outcomes=[1,0]
     #print("offspring size")
@@ -137,7 +137,7 @@ def unifcrossover_func(parents, offspring_size, ga_instance):
         child=parent2.copy()#child is copy of parent2 by default
         if rand.choices(outcomes,weights)==[1]:
             for i in range(len(parent1)):
-                if not np.where(parent1[i]==parent2)[0].size!=0:#gene parent1[i] not in parent[2]
+                if np.where(parent1[i]==parent2)[0].size==0:#gene parent1[i] not in parent[2]
                     if rand.random()<0.5:#copy parent1
                         #print("copy parent1")
                         child[i]=parent1[i]
@@ -170,6 +170,7 @@ def unifcrossover_func(parents, offspring_size, ga_instance):
 ### It checks whether the new course is already in the combination and if so
 ### Generates a new one
 def mutation_func(offspring, ga_instance):
+    print("mutation")
     #fitness_values=ga_instance.previous_generation_fitness
     #mean_fitness=sum(fitness_values)/len(fitness_values)
     #print(mean_fitness)
@@ -268,7 +269,7 @@ def soft_skill_estimation_mean(thresholds,courses_effects,theta,solution,soft_sk
 
 ### Through multiple trials, convergence of the GA is estimated to be around 100 generations
 ### EXPLANATION: The random effects of the courses, whose mean is approximately 0
-### It would be a differenet with fixed effects for each course
+### It would be a different with fixed effects for each course
 
 """
 #Read real data set
@@ -397,7 +398,7 @@ desired_outcome=rdf.get_desired_standard(domain_id)
 #get possible courses
 possible_courses=rdf.get_courses_domain(domain_id)    
 fitness_function = fitness_func
-num_generations = 500
+num_generations = 10
 num_parents_mating = 50
 sol_per_pop = 100
 num_genes = int(N_courses_followed)

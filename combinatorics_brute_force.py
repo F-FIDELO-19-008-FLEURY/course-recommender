@@ -31,7 +31,7 @@ def fitness_func(ga_instance, solution, solution_idx):
             score=logistic(estimated_outcome,desired_outcome[i])
             
         if comp:
-            fitness=fitness+score
+            fitness=fitness+score*(1/10)
         else:
             fitness=fitness*score
     return fitness
@@ -70,6 +70,11 @@ def soft_skill_estimation_mean(thresholds,courses_effects,theta,solution,soft_sk
     expected_outcome=1*p_1+2*p_2+3*p_3+4*p_4
     return expected_outcome
 
+### Function that saves a combination of courses into the appropiate cells at the dataframe
+def save_recommendations(recommendations,row,combination,N_courses_followed):
+    for i in range(N_courses_followed):
+        recommendations.iloc[row,i+1]=combination[i]
+
 
 
 ################## End of  User Defined Functions #############################
@@ -88,15 +93,73 @@ real_data_stage2=real_data.loc[real_data["stage"]==2]
 real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]>5]
 real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]<12]
 #Domain 1: EE
-real_data_stage2=real_data_stage2.loc[real_data_stage2["domain_id"]==1]
+real_data_stage2=real_data_stage2.loc[real_data_stage2["domain_id"]==4]
 real_data_stage2=real_data_stage2.reset_index(drop=True)
 #Thresholds
 thresholds=rdf.get_thresholds()
 #Course Effects
 courses_effects=rdf.get_courses_effects()
-student_id=real_data_stage2.iloc[0,0]
-domain_id=real_data_stage2.iloc[0,26]
-N_courses_followed=real_data_stage2.iloc[0,25]
+student_id=real_data_stage2.iloc[8,0]
+domain_id=real_data_stage2.iloc[8,26]
+N_courses_followed=real_data_stage2.iloc[8,25]
+min_skill=1#Minimum Soft skill proficiency
+max_skill=4#Maximum Soft skill proficiency
+#Compensatory boolean variable
+comp=True
+#Score function flag variable
+score_func=1#Linear
+#score_func=2#Logistic
+#Student Effect
+theta=rdf.get_student_random_effect(student_id)
+#Desired outcome
+desired_outcome=rdf.get_desired_standard(domain_id)
+#get possible courses
+possible_courses=rdf.get_courses_domain(domain_id)
+calculation_time=pd.DataFrame(np.zeros(shape=(1,15)))
+calculation_time.columns=['combination_index','c1','c2','c3','c4',
+                          'c5','c6','c7','c8',
+                          'c9','c10','c11','fitness','time(s)','Ncombs']
+best_fitness=-1
+best_solution=[]
+start_time = time.time()
+i=0
+for solution in itertools.combinations(possible_courses, N_courses_followed):
+    current_fitness=fitness_func(None,solution,0)
+    if current_fitness>best_fitness:
+        best_fitness=current_fitness
+        best_solution=solution    
+    if i==0 or i%2000==0:        
+        end_time = time.time()
+        best_solution=list(best_solution)
+        best_solution.sort()
+        elapsed_time = end_time - start_time
+        combs=math.comb(len(possible_courses),len(solution))
+        calculation_time.loc[i,:]=[i,best_solution[0],best_solution[1],
+                                   best_solution[2],best_solution[3],best_solution[4],
+                                   best_solution[5],best_solution[6],best_solution[7],
+                                   best_solution[8],best_solution[9],0,
+                                   best_fitness,elapsed_time,combs]        
+        calculation_time.to_csv("./real_data/combinations_cal_time_bf_NU.csv")
+    i+=1
+
+
+"""
+#Read real data set
+real_data=rdf.read_real_data()
+#Considering only stage 2
+real_data_stage2=real_data.loc[real_data["stage"]==2]
+real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]>5]
+real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]<12]
+#Domain 1: EE
+real_data_stage2=real_data_stage2.loc[real_data_stage2["domain_id"]==4]
+real_data_stage2=real_data_stage2.reset_index(drop=True)
+#Thresholds
+thresholds=rdf.get_thresholds()
+#Course Effects
+courses_effects=rdf.get_courses_effects()
+student_id=real_data_stage2.iloc[8,0]
+domain_id=real_data_stage2.iloc[8,26]
+N_courses_followed=real_data_stage2.iloc[8,25]
 min_skill=1#Minimum Soft skill proficiency
 max_skill=4#Maximum Soft skill proficiency
 #Compensatory boolean variable
@@ -132,6 +195,7 @@ for i in range(100):
     #print(f"Elapsed time: {elapsed_time} seconds")    
     #print(combs," Combinations")
 calculation_time.to_csv("./real_data/combinations_cal_time_bf.csv")
+"""
 
 
 ################# End of Brute Force Estimation Computing Time ################
