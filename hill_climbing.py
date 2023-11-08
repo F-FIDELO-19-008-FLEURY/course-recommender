@@ -16,6 +16,7 @@ import numpy as np
 ### It checks whether the fitness amongst the different dimensions is compensated or not
 ### as well as which scoring function to use
 def fitness_func(ga_instance, solution, solution_idx):
+    soft_skill_scores=[]
     if comp:
         fitness=0
     else:
@@ -26,14 +27,22 @@ def fitness_func(ga_instance, solution, solution_idx):
             score=linear(estimated_outcome,desired_outcome[i])
         elif score_func==2:
             score=logistic(estimated_outcome,desired_outcome[i])
-            
+        elif score_func==3:
+            score=quadratic(estimated_outcome,desired_outcome[i])
+        if ga_instance is None:
+            soft_skill_scores.append(score)            
         if comp:
             fitness=fitness+score*(1/10)
         else:
             fitness=fitness*score
+    if ga_instance is None:
+        return fitness,soft_skill_scores
     return fitness
 
 ### Linear scoring function
+### Fair scoring with no bonuses nor penalisations if the
+### soft skill proficiency mean reaches or not the expected profile
+### Scoring function rescaled so that it ranges from 0 to 1
 def linear(estimated_skill,goal_skill):
     #function min value
     f_min=min_skill-goal_skill
@@ -41,11 +50,30 @@ def linear(estimated_skill,goal_skill):
     f_max=max_skill-goal_skill    
     return (estimated_skill-goal_skill-f_min)/(f_max-f_min)
    
-### Logistic scoring function    
+### Logistic scoring function
+### Stricter scoring with penalisations and bonuses if the
+### soft skill proficiency mean reaches or not the expcted profile
+### Scoring function rescaled so that it ranges from 0 to 1     
 def logistic(estimated_skill,goal_skill):
     #crossing value with linear function at estimated_goal=goal_skill
     fcrossing=(goal_skill-min_skill)/(max_skill-min_skill)
     return (1)/(1+((1-fcrossing)/fcrossing)*pow(math.e,3*(goal_skill-estimated_skill)))
+
+### Quadratic Root scoring function
+### Less demanding scoring that allows an easier scoring if the
+### soft skill proficiency mean reaches or not the expcted profile
+### Scoring function rescaled so that it ranges from 0 to 1  
+def quadratic(estimated_skill,goal_skill):
+    #crossing value with linear function at estimated_goal=goal_skill
+    fcrossing=(goal_skill-min_skill)/(max_skill-min_skill)
+    #function min value
+    f_min=min_skill-goal_skill
+    #function max value
+    f_max=max_skill-goal_skill
+    if estimated_skill<=goal_skill:            
+        return -1*pow(estimated_skill-goal_skill,2)/(-f_min)*fcrossing+fcrossing
+    else:
+        return 1*pow(estimated_skill-goal_skill,2)/(f_max)*(1-fcrossing)+fcrossing
 
 ### Function that estimates the soft skill mean based on the ordinal logistic regression model
 ### It calculates the probability of each level and estimates the mean SUM x*P(X=x)
@@ -67,26 +95,25 @@ def soft_skill_estimation_mean(thresholds,courses_effects,theta,solution,soft_sk
     expected_outcome=1*p_1+2*p_2+3*p_3+4*p_4
     return expected_outcome
 
-def generate_random_combination(possible_courses,N_courses_followed):
+def generate_initial_combination(possible_courses,N_courses_followed):
     combination=[]
     while len(combination)<N_courses_followed:
         random_course=np.random.choice(possible_courses)
-        if np.where(random_course==combination)[0].size==0:
+        if random_course not in combination:
             combination.append(random_course)
     return combination
 
 def generate_neighbor(combination,possible_courses,N_courses_followed):
     if combination is None:
-        current_solution=generate_random_combination(possible_courses,N_courses_followed)
+        current_solution=generate_initial_combination(possible_courses,N_courses_followed)
         return current_solution
     flag=False
     count=0
     random_course=np.random.choice(possible_courses)
-    random_course_idx = np.random.choice(N_courses_followed)
-    
+    random_course_idx = np.random.choice(N_courses_followed)    
     while flag!=True and count<=10:
-        index=np.where(combination==random_course)
-        if index[0].size!=0:
+        combination_as_list=list(combination)
+        if random_course in combination_as_list:#random gene is already in the current chromosome
             random_course=np.random.choice(possible_courses)
             count+=1
         else:

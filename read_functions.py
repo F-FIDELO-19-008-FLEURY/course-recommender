@@ -30,35 +30,39 @@ def read_real_data():
         return real_data
     return []
 
-### Function that returns the recommendations
-### Returns a longitudinal dataframe where each each column represents a course and the 12th column is the fitness
-def read_recommendations(score_func,comp):
-    #If the file exists, read it and return it
-    if score_func==1 and comp and os.path.exists("./real_data/recommendations_lin_comp.csv"):
-        real_data=pd.read_csv("./real_data/recommendations_lin_comp.csv")
-        real_data.drop(real_data.columns[0],axis=1,inplace=True)
-        return real_data
-    if score_func==1 and not comp and os.path.exists("./real_data/recommendations_lin_parcomp.csv"):
-        real_data=pd.read_csv("./real_data/recommendations_lin_parcomp.csv")
-        real_data.drop(real_data.columns[0],axis=1,inplace=True)
-        return real_data
-    if score_func==2 and comp and os.path.exists("./real_data/recommendations_quad_comp.csv"):
-        real_data=pd.read_csv("./real_data/recommendations_quad_comp.csv")
-        real_data.drop(real_data.columns[0],axis=1,inplace=True)
-        return real_data
-    if score_func==2 and not comp and os.path.exists("./real_data/recommendations_quad_parcomp.csv"):
-        real_data=pd.read_csv("./real_data/recommendations_quad_parcomp.csv")
-        real_data.drop(real_data.columns[0],axis=1,inplace=True)
-        return real_data
-    if score_func==3 and comp and os.path.exists("./real_data/recommendations_exp_comp.csv"):
-        real_data=pd.read_csv("./real_data/recommendations_exp_comp.csv")
-        real_data.drop(real_data.columns[0],axis=1,inplace=True)
-        return real_data
-    if score_func==3 and not comp and os.path.exists("./real_data/recommendations_exp_parcomp.csv"):
-        real_data=pd.read_csv("./real_data/recommendations_exp_parcomp.csv")
-        real_data.drop(real_data.columns[0],axis=1,inplace=True)
-        return real_data
-    return []
+
+### Function that returns the average fitness from the different seeds of the same student
+def read_average_solution(student_row,domain_id,score_function,compensatory,number_generations,crossover_prob,mutation_prob,seed_init,seed_end,dimensions):  
+    average_fitness=0
+    average_dimensions=[]
+    for seed in range(seed_init,seed_end+1):
+        if dimensions is False:
+            average_fitness=average_fitness+read_solution(student_row,domain_id,score_function,compensatory,number_generations,crossover_prob,mutation_prob,seed,dimensions)
+        else:
+            average_dimensions=[a+b for a,b in zip(average_dimensions,read_solution(student_row,domain_id,score_function,compensatory,number_generations,crossover_prob,mutation_prob,seed,dimensions))]
+    if dimensions is False:    
+        return average_fitness/(seed_end-seed_init+1)
+    for i in range(len(average_dimensions)):
+        average_dimensions[i]=average_dimensions[i]/(seed_end-seed_init+1)
+    return average_dimensions
+
+
+### Function that returns the fitness of the solution of a single student
+def read_solution(student_row,domain_id,score_function,compensatory,number_generations,crossover_prob,mutation_prob,seed,dimensions):
+    if compensatory:
+        file_title="bestsol_"+str(student_row)+"_"+str(domain_id)+"_"+str(score_function)+"_comp_"+str(number_generations)+"_"+str(int(crossover_prob*100))+"_"+str(int(mutation_prob*100))+"_"+str(seed)
+    else:
+        file_title="bestsol_"+str(student_row)+"_"+str(domain_id)+"_"+str(score_function)+"_parcomp_"+str(number_generations)+"_"+str(int(crossover_prob*100))+"_"+str(int(mutation_prob*100))+"_"+str(seed)
+    if os.path.exists(file_title):
+        file=open(file_title,'r')       
+        line  = file.readline()
+        token_line=line.split(' ')
+        if dimensions is False:
+            file.close() 
+            return float(token_line[len(token_line)-1])
+        return float(token_line)
+    return 0
+
 
 ### Function that returns the course effects
 ### Returns a 10x104 dataframe by default, where each row relates to each skill (10 soft skills)
