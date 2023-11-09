@@ -130,33 +130,13 @@ def mutation_func(offspring, ga_instance):
     global generation_number
     generation_number+=1
     ct = time.time()
-    for chromosome_idx in range(offspring.shape[0]):
+    view = offspring.shape[0]
+    for chromosome_idx in range(view):
         if np.random.random()<=ga_instance.mutation_probability:            
-            #Flag to know if mutation has been performed
-            flag=False
-            #Counter to check how many times a random course has been generated and has been on the combination
-            count=0
-            #possible_courses=
-            random_gene=np.random.choice(possible_courses)
+            availabe_course_for_sol = np.setdiff1d(possible_courses,offspring[chromosome_idx]) #Remove all course of indiv in the catalog to draw a rn value in
+            random_gene=np.random.choice(availabe_course_for_sol)
             random_gene_idx = np.random.choice(range(offspring.shape[1]))
-            #solution=offspring[chromosome_idx].copy()
-            
-            while flag!=True and count<=10:
-                #solution_as_list=list(solution)
-                if random_gene in offspring[chromosome_idx]:#random gene is already in the current chromosome
-                    #print("mutation_newcourse_in_solution")
-                    #print(solution)
-                    #print("new course not selected")
-                    #print(random_gene)
-                    random_gene=np.random.choice(possible_courses)
-                    count+=1
-                    
-                else:#new random gene is not in the current chromosome
-                    #solution[random_gene_idx]=random_gene
-                    #offspring[chromosome_idx][random_gene_idx]=random_gene
-                    #offspring[chromosome_idx]=solution
-                    flag=True
-                    
+            offspring[chromosome_idx][random_gene_idx]=random_gene 
     print(generation_number," generation mutation"+'{0:.3f}'.format(time.time() - ct))
     return offspring
 
