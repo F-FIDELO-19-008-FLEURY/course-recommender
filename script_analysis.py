@@ -162,7 +162,7 @@ def soft_skill_dimension_comparison(average_dimensions,score_function):
   
 
 ### Function that writes the comparison between the recommendation fitness and the actual fitness
-def write_comparison_avg_fitness(domain_id,score_function,compensatory,comparison_df,seed_init,seed_end,file_directory):
+def write_comparison_avg_fitness(domain_id,score_function,compensatory,comparison_df,seed_init,seed_end,path):
     global theta
     #overall loop of all students for an specific domain
     for i in range(len(real_data_stage2)):
@@ -204,19 +204,8 @@ def write_comparison_avg_fitness(domain_id,score_function,compensatory,compariso
                         'dim_gain_ssk1','ddim_gain_ssk2','dim_gain_ssk3','dim_gain_ssk4','dim_gain_ssk5',
                         'dim_gain_ssk6','dim_gain_ssk7','dim_gain_ssk8','dim_gain_ssk9','dim_gain_ssk10',                                      
                         'dimensions_passed_recommended','dimensions_passed_real','courses_followed']
-   
-    path=file_directory
-    mode = 0o777
-    if not os.path.exists(path):
-        os.makedirs(path,mode)
-    if score_function==1:
-        score_function_as_string="linear_"
-    elif score_function==2:
-        score_function_as_string="logistic_"
-    elif score_function==3:
-        score_function_as_string="quadratic_"
     #writing the result files
-    comparison_df.to_csv(file_directory+score_function_as_string+"comparison_"+str(number_generations)+"_"+str(int(crossover_probability*100))+"_"+str(int(mutation_probability*100))+"_"+str(seed_init)+"_"+str(seed_end)+".csv")
+    comparison_df.to_csv(path+"comparison_"+str(number_generations)+"_"+str(int(crossover_probability*100))+"_"+str(int(mutation_probability*100))+"_"+str(seed_init)+"_"+str(seed_end)+".csv")
 
 
 ### Function that reads the comparison files between the recommendation fitness and the actual fitness
@@ -248,11 +237,6 @@ def read_loop(domain_id,seed_init,seed_end):
             else:
                 domain_dataset=pd.concat([domain_dataset,read_comparison_avg_fitness(domain_id,j+1,compensatory,seed_init,seed_end)])
     return domain_dataset
-
-### Function that returns the summary table
-def summary_table(domain_id,score_function,compensatory,comparison_df,seed_init,seed_end):
-    domain_dataset=read_loop(domain_id,seed_init,seed_end)
-    return 0
 
 ### Function that shows the boxplot
 def boxplot(domain_id,score_function,compensatory,comparison_df,seed_init,seed_end):
@@ -296,13 +280,13 @@ def boxplot(domain_id,score_function,compensatory,comparison_df,seed_init,seed_e
 
 ### Formatting of the parser
 parser = ArgumentParser(description="Reading Recommendations Script",formatter_class=ArgumentDefaultsHelpFormatter)
-parser.add_argument("-d", "--domain_id", default=1, type=int, help="Domain id EE=1,IS=2,MX=3,NU=4")
+parser.add_argument("-d", "--domain_id", default=2, type=int, help="Domain id EE=1,IS=2,MX=3,NU=4")
 parser.add_argument("-f", "--score_function", default=1, type=int, help="Score function Linear=1,Logistic=2,Quadratic=3")
 parser.add_argument("-c", "--compensatory", default=False, type=lambda x: (str(x).lower() == 'true' or str(x).lower() == 't' or str(x)=='1'), help="Compensatory=True, Partially Compensatory=False")
 parser.add_argument("-g", "--number_generations", default=100, type=int, help="Number of generations")
 parser.add_argument("-x", "--crossover_probability", default=0.80, type=float, help="Probability of crossover")
 parser.add_argument("-m", "--mutation_probability", default=0.25, type=float, help="Probability of mutation")
-parser.add_argument("-a", "--action", default=1, type=int, help="Actions: write=1,summary=2,boxplot=3")
+parser.add_argument("-a", "--action", default=1, type=int, help="Actions: write=1,boxplot=2")
 parser.add_argument("-i", "--seed_init", default=1, type=int, help="Seed")
 parser.add_argument("-j", "--seed_end", default=100, type=int, help="Seed")
 ### Parsing the arguments
@@ -348,13 +332,14 @@ possible_courses=rdf.get_courses_domain(domain_id)
 #comparison dataframe to be filled in the following loop
 comparison=pd.DataFrame(np.zeros(shape=(len(real_data_stage2),30)))
 #directory setting
-file_directory=rdf.toStringfilestructure(domain_id,compensatory,folder="./analysis/")
-
+file_directory=rdf.toStringfilestructure(domain_id,compensatory,score_function,None,folder="/analysis/")
+path="/home/luis.pinos-ullauri"+file_directory
+mode = 0o777    
+if not os.path.exists(path):
+    os.makedirs(path,mode)
 if action==1:
-    write_comparison_avg_fitness(domain_id, score_function, compensatory, comparison, seed_init, seed_end,file_directory)
+    write_comparison_avg_fitness(domain_id, score_function, compensatory, comparison, seed_init, seed_end,path)
 if action==2:
-    summary_table(domain_id, score_function, compensatory, comparison, seed_init, seed_end)
-if action==3:
     y=boxplot(domain_id, score_function, compensatory, comparison, seed_init, seed_end)
 
 

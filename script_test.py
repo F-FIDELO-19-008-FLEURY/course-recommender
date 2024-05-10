@@ -346,7 +346,7 @@ def write_files(solution,solution_fitness,best_fitness_by_gen,initial_population
 ### Formatting of the parser
 parser = ArgumentParser(description="Genetic Algorithm Script",formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("-s", "--student_row", default=0,type=int, help="Student id row")
-parser.add_argument("-d", "--domain_id", default=2, type=int, help="Domain id EE=1,IS=2,MX=3,NU=4")
+parser.add_argument("-d", "--domain_id", default=1, type=int, help="Domain id EE=1,IS=2,MX=3,NU=4")
 parser.add_argument("-f", "--score_function", default=1, type=int, help="Score function Linear=1,Logistic=2,Quadratic=3")
 parser.add_argument("-c", "--compensatory", default=False, type=lambda x: (str(x).lower() == 'true' or str(x).lower() == 't' or str(x)=='1'), help="Compensatory=True, Partially Compensatory=False")
 parser.add_argument("-g", "--number_generations", default=10, type=int, help="Number of generations")
@@ -458,7 +458,7 @@ best_fitness_by_gen=ga_instance.best_solutions_fitness
 #Fitness with scores of the solution
 solution_fitness=fitness_func(None,solution,None)
 #directory setting
-file_directory=rdf.toStringfilestructure(domain_id,compensatory,score_function,folder="/tests/")
+file_directory=rdf.toStringfilestructure(domain_id,compensatory,score_function,None,folder="/tests/")
 path="/home/luis.pinos-ullauri"+file_directory
 mode = 0o777    
 if not os.path.exists(path):

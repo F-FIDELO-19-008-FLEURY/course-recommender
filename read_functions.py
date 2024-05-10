@@ -83,10 +83,19 @@ def get_desired_outcome(domain_id):
 ### Returns an unordered list of the courses elegible for domain id
 def get_courses_domain(domain_id):
     #If the file exists, read it and return it
-    if os.path.exists("./real_data/courses_ids_names_all.csv"):
-        available_courses=pd.read_csv("./real_data/courses_ids_names_all.csv",encoding=('latin1'))
+    domain_str=""
+    if domain_id==1:
+        domain_str="ee"
+    elif domain_id==2:
+        domain_str="is"
+    elif domain_id==3:
+        domain_str="mx"
+    elif domain_id==4:
+        domain_str="nu"
+    if os.path.exists("./real_data/courses_ids_names_"+domain_str+".csv"):
+        available_courses=pd.read_csv("./real_data/courses_ids_names_"+domain_str+".csv",encoding=('latin1'))
         available_courses.drop(available_courses.columns[0],axis=1,inplace=True)
-        return [*available_courses.loc[available_courses["domain_id"]==domain_id]["variable_id"]]
+        return [*available_courses["variable_id"]]
     return []
 
 
@@ -117,8 +126,12 @@ def toStringfilestructure(domain_id,compensatory,score_function=None,student_id=
         score_function_as_string="logistic/"
     elif score_function==3:
         score_function_as_string="quadratic/"
+    #score_function is not None
     if student_id is not None:
         return folder+domain_as_string+compensatory_as_string+score_function_as_string+str(student_id)+"/"
+    #score_function and student id is None
+    else:
+        return folder+domain_as_string+compensatory_as_string+score_function_as_string
 
 
 ### Function that reads the bestsol file and returns the fitness of the solution of a single student under a specific seed
@@ -148,8 +161,8 @@ def read_solution(student_id,domain_id,score_function,compensatory,number_genera
                 overall_fitness=overall_fitness*fitness_values_float[i]
             fitness_values_float[0]=overall_fitness
         return fitness_values_float
-    print(seed)
-    print(student_id)
+    #print(seed)
+    #print(student_id)
 
 
 ### Function that returns the average fitness from the different seeds (runs) of the same student

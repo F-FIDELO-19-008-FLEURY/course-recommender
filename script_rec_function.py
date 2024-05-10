@@ -166,13 +166,14 @@ def unifcrossover_func(parents, offspring_size, ga_instance):
 ### It checks whether the new course is already in the combination and if so
 ### Generates a new one
 def mutation_func(offspring, ga_instance):
-    view = offspring.shape[0]
-    for chromosome_idx in range(view):
-        available_course_for_sol = np.setdiff1d(possible_courses,offspring[chromosome_idx]) #Remove all course of indiv in the catalog to draw a rn value in
-        if len(available_course_for_sol)>=1:
-            random_gene=np.random.choice(available_course_for_sol)
-            random_gene_idx = np.random.choice(range(offspring.shape[1]))
-            offspring[chromosome_idx,random_gene_idx]=random_gene
+    view = offspring.shape[0]    
+    if np.random.random()<=ga_instance.mutation_probability:
+        for chromosome_idx in range(view):        
+            available_course_for_sol = np.setdiff1d(possible_courses,offspring[chromosome_idx]) #Remove all course of indiv in the catalog to draw a rn value in
+            if len(available_course_for_sol)>=1:
+                random_gene=np.random.choice(available_course_for_sol)
+                random_gene_idx = np.random.choice(range(offspring.shape[1]))
+                offspring[chromosome_idx,random_gene_idx]=random_gene
     return offspring
 
 ### Function that selects parents based on a tournament
@@ -346,7 +347,7 @@ def write_files(solution,solution_fitness,best_fitness_by_gen,initial_population
 ### Formatting of the parser
 parser = ArgumentParser(description="Genetic Algorithm Script",formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("-s", "--student_row", default=0,type=int, help="Student id row")
-parser.add_argument("-d", "--domain_id", default=4, type=int, help="Domain id EE=1,IS=2,MX=3,NU=4")
+parser.add_argument("-d", "--domain_id", default=1, type=int, help="Domain id EE=1,IS=2,MX=3,NU=4")
 parser.add_argument("-f", "--score_function", default=1, type=int, help="Score function Linear=1,Logistic=2,Quadratic=3")
 parser.add_argument("-c", "--compensatory", default=False, type=lambda x: (str(x).lower() == 'true' or str(x).lower() == 't' or str(x)=='1'), help="Compensatory=True, Partially Compensatory=False")
 parser.add_argument("-g", "--number_generations", default=100, type=int, help="Number of generations")
@@ -444,6 +445,7 @@ print("Crossover probability:",ga_instance.crossover_probability)
 print("Mutation probability:",ga_instance.mutation_probability)
 print(f"Best fitness value reached after {ga_instance.best_solution_generation} generations.")
 
+
 #initial population
 initial_population=ga_instance.initial_population.copy()
 #last population
@@ -466,5 +468,6 @@ if not os.path.exists(path):
 write_files(solution,solution_fitness,best_fitness_by_gen,initial_population,last_population,pop_init_fitness,pop_last_fitness,
                   student_id,domain_id,score_function,compensatory,number_generations,
                   crossover_probability,mutation_probability,seed)
+
 
 
