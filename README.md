@@ -4,9 +4,22 @@
 
 ## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+This study comprises a recommender system for postgraduate courses based on soft skills.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+There are 7 Python files:
+
+
+1. script_rec_function.py is the script which executes the genetic algorithms based on hyperparameters that need to be set either on console or through a bash script.
+2. script_test.py is the script for the various tests, which helped us empirically tune the hyperparameters of the Genetic Algorithms.
+3. read_functions.py is a file that consists on multiple methods that are used to read and process the data for the recommendations
+4. script_analysis.py is the script that reads and analyses the results in order to write the summary result files.
+5. combinatorics_brute_force.py is the file that we used to check each and every one of the combinations of the courses.
+6. fitness_spread.py is a file that tries to show how the fitness changes across the various combinations
+7. script_hill_climbing.py is the script that we used to perform a depth-first hill climbing algorithm
+
+In order to use the source files and replicate the results, you need to install PyGAD. Other dependencies needed for the source files are:
+
+(#editing-this-readme)!
 
 ## Add your files
 
