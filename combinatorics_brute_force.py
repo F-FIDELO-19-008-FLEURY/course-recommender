@@ -83,10 +83,8 @@ def quadratic(estimated_skill,soft_skill_id):
 def soft_skill_estimation_mean(thresholds,courses_effects,theta,solution,soft_skill_id):
     linear_combination=0
     for i in range(len(solution)):
-        if solution[i]!=0 and solution[i]!=104 and solution[i]!=105:
+        if solution[i]!=0:
             linear_combination=linear_combination+courses_effects.iloc[soft_skill_id,0]+courses_effects.iloc[soft_skill_id,solution[i]]
-        elif solution[i]==104 or solution[i]==105:
-            linear_combination=linear_combination+courses_effects.iloc[soft_skill_id,0]+courses_effects.iloc[soft_skill_id,solution[i]-1]
     linear_combination=linear_combination+theta
     eta12=thresholds.iloc[soft_skill_id,0]-linear_combination
     eta23=thresholds.iloc[soft_skill_id,1]-linear_combination
@@ -114,8 +112,7 @@ real_data=rdf.read_real_data()
 #Considering only stage 2
 real_data_stage2=real_data.loc[real_data["stage"]==2]
 real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]>5]
-real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]<12]
-#Domain 1: EE
+#Domain 1: NU
 real_data_stage2=real_data_stage2.loc[real_data_stage2["domain_id"]==4]
 real_data_stage2=real_data_stage2.reset_index(drop=True)
 #Thresholds
@@ -164,61 +161,6 @@ for solution in itertools.combinations(possible_courses, N_courses_followed):
                                    best_fitness,elapsed_time,combs]        
         calculation_time.to_csv("./real_data/combinations_cal_time_bf_NU.csv")
     i+=1
-
-
-"""
-#Read real data set
-real_data=rdf.read_real_data()
-#Considering only stage 2
-real_data_stage2=real_data.loc[real_data["stage"]==2]
-real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]>5]
-real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]<12]
-#Domain 1: EE
-real_data_stage2=real_data_stage2.loc[real_data_stage2["domain_id"]==4]
-real_data_stage2=real_data_stage2.reset_index(drop=True)
-#Thresholds
-thresholds=rdf.get_thresholds()
-#Course Effects
-courses_effects=rdf.get_courses_effects()
-student_id=real_data_stage2.iloc[8,0]
-domain_id=real_data_stage2.iloc[8,26]
-N_courses_followed=real_data_stage2.iloc[8,25]
-min_skill=1#Minimum Soft skill proficiency
-max_skill=4#Maximum Soft skill proficiency
-#compensatoryensatory boolean variable
-compensatory=True
-#Score function flag variable
-score_function=1#Linear
-#score_function=2#Logistic
-#Student Effect
-theta=rdf.get_student_random_effect(student_id)
-#Desired outcome
-desired_outcome=rdf.get_desired_standard(domain_id)
-#get possible courses
-possible_courses=rdf.get_courses_domain(domain_id)
-calculation_time=pd.DataFrame(np.zeros(shape=(100,4)))
-calculation_time.columns=['trial','fitness','time(s)','Ncombs']
-for i in range(100):
-    calculation_time.iloc[i,0]=i
-    best_fitness=-1
-    best_solution=[]
-    start_time = time.time()
-    for solution in itertools.combinations(possible_courses, N_courses_followed):
-        current_fitness=fitness_func(None,solution,0)
-        if current_fitness>best_fitness:
-            best_fitness=current_fitness
-            best_solution=solution
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    combs=math.comb(len(possible_courses),len(solution))
-    calculation_time.iloc[i,1]=best_fitness
-    calculation_time.iloc[i,2]=elapsed_time
-    calculation_time.iloc[i,3]=combs
-    print(best_solution)    
-    #print(f"Elapsed time: {elapsed_time} seconds")    
-    #print(combs," Combinations")
-calculation_time.to_csv("./real_data/combinations_cal_time_bf.csv")
-"""
 
 
 ################# End of Brute Force Estimation compensatoryuting Time ################

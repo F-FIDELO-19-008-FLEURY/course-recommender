@@ -126,10 +126,8 @@ def quadratic(estimated_skill,soft_skill_id):
 def soft_skill_estimation_mean(solution,soft_skill_id):
     linear_combination=0
     for i in range(len(solution)):
-        if solution[i]!=0 and solution[i]!=104 and solution[i]!=105:
+        if solution[i]!=0:
             linear_combination=linear_combination+courses_effects.iloc[soft_skill_id,0]+courses_effects.iloc[soft_skill_id,solution[i]]
-        elif solution[i]==104 or solution[i]==105:
-            linear_combination=linear_combination+courses_effects.iloc[soft_skill_id,0]+courses_effects.iloc[soft_skill_id,solution[i]-1]
     linear_combination=linear_combination+theta[soft_skill_id]
     eta12=thresholds.iloc[soft_skill_id,0]-linear_combination
     eta23=thresholds.iloc[soft_skill_id,1]-linear_combination
@@ -378,8 +376,6 @@ real_data=rdf.read_real_data()
 real_data_stage2=real_data.loc[real_data["stage"]==2]
 #Considering only students with more than 5 courses
 real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]>5]
-#Removing the one student with 12 courses
-real_data_stage2=real_data_stage2.loc[real_data_stage2["N_courses_followed"]<12]
 #Shrinking the dataset for domain of interest
 real_data_stage2=real_data_stage2.loc[real_data_stage2["domain_id"]==domain_id]
 real_data_stage2=real_data_stage2.reset_index(drop=True)
