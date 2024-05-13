@@ -1,10 +1,20 @@
 # Course recommender
 
 
-
-## Getting started
-
 This study comprises a recommender system for postgraduate courses based on soft skills.
+
+## Dependancies and configuration
+
+This project requires the PyGAD framework, which needs to be installed.
+
+To install PyGAD, simply use pip to download and install the library from PyPI (Python Package Index). The library is at PyPI at this page https://pypi.org/project/pygad.
+
+Install PyGAD with the following command:
+
+pip install pygad
+To get started with PyGAD, please read the documentation at Read The Docs https://pygad.readthedocs.io.
+(#editing-this-readme)!
+
 
 There are 7 Python files:
 
@@ -19,6 +29,13 @@ There are 7 Python files:
 
 In order to use the source files and replicate the results, you need to install PyGAD. Other dependencies needed for the source files are:
 
+
+To install PyGAD, simply use pip to download and install the library from PyPI (Python Package Index). The library is at PyPI at this page https://pypi.org/project/pygad.
+
+Install PyGAD with the following command:
+
+pip install pygad
+To get started with PyGAD, please read the documentation at Read The Docs https://pygad.readthedocs.io.
 (#editing-this-readme)!
 
 ## Add your files
