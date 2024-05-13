@@ -20,7 +20,9 @@ This project requires the PyGAD framework, which needs to be installed.
 To install PyGAD, simply use pip to download and install the library from PyPI (Python Package Index). The library is at PyPI at this page https://pypi.org/project/pygad.
 
 Install PyGAD with the following command:
-`pip install pygad`
+```
+pip install pygad
+```
 To get started with PyGAD, please read the documentation at Read The Docs https://pygad.readthedocs.io.
 (#editing-this-readme)!
 
