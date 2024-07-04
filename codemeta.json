@@ -1,0 +1,111 @@
+{
+    "@context": "https://w3id.org/codemeta/3.0",
+    "type": "SoftwareSourceCode",
+    "applicationCategory": "Technology for Human Learning",
+    "author": [
+        {
+            "id": "https://orcid.org/0000-0002-3694-3487",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Centre for Digital Systems - CERI SN - IMT Nord Europe; imec itec KU Leuven"
+            },
+            "email": "luis.pinos.research@proton.me",
+            "familyName": "Pinos Ullauri",
+            "givenName": "Luis Alberto"
+        },
+        {
+            "id": "https://orcid.org/0000-0003-2104-8671",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Centre for Digital Systems - CERI SN - IMT Nord Europe"
+            },
+            "email": "alexis.lebis@imt-nord-europe.fr",
+            "familyName": "Lebis",
+            "givenName": "Alexis"
+        }
+    ],
+    "codeRepository": "https://gitlab.univ-lille.fr/luis.pinos-ullauri/course-recommender",
+    "contributor": [
+        {
+            "id": "https://orcid.org/0000-0003-4011-219X",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "imec itec KU Leuven"
+            },
+            "email": "wim.vandennoortgate@kuleuven.be",
+            "familyName": "Van den Noortgate",
+            "givenName": "Wim"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-0175-3181",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Centre for Digital Systems - CERI SN - IMT Nord Europe"
+            },
+            "email": "anthony.fleury@imt-nord-europe.fr",
+            "familyName": "Fleury",
+            "givenName": "Anthony"
+        },
+        {
+            "id": "https://orcid.org/0000-0003-2104-8671",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Centre for Digital Systems - CERI SN - IMT Nord Europe"
+            },
+            "email": "alexis.lebis@imt-nord-europe.fr",
+            "familyName": "Lebis",
+            "givenName": "Alexis"
+        },
+        {
+            "id": "https://orcid.org/0000-0003-1972-5629",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "ICL Junia - Catholic University of Lille"
+            },
+            "email": "abir.karami@univ-catholille.fr",
+            "familyName": "Karami",
+            "givenName": "Abir"
+        },
+        {
+            "id": "https://orcid.org/0000-0003-3646-1741",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Centre for Digital Systems - CERI SN - IMT Nord Europe"
+            },
+            "email": "mathieu.vermeulen@imt-nord-europe.fr",
+            "familyName": "Vermeulen",
+            "givenName": "Mathieu"
+        }
+    ],
+    "dateCreated": "2024-01-10",
+    "dateModified": "2024-05-13",
+    "datePublished": "2024-05-13",
+    "description": "This study comprises a recommender system for postgraduate courses based on soft skills.\nThere are 5 Python files:\n\nread_functions.py is a file that consists on multiple methods that are used to read and process the data for the recommendations.\ncombinatorics_brute_force.py is used to check each and every one of the combinations of the courses, and update a file every 2000 tested combinations.\nscript_test.py is the script for the various tests, which helped us empirically tune the hyperparameters of the Genetic Algorithms.\nscript_rec_function.py is the script which executes the genetic algorithms based on hyperparameters that need to be set either on console or through a bash script.\nscript_analysis.py is the script that reads and analyses the results in order to write the summary result files.",
+    "funder": {
+        "type": "Organization",
+        "name": "ULNE i-site"
+    },
+    "identifier": "swh:1:snp:ea723f791e0059b332838a61459e52f0a2f22d4a;origin=https://gitlab.univ-lille.fr/luis.pinos-ullauri/course-recommender.git",
+    "keywords": [
+        "courses",
+        "soft skills",
+        "modelling"
+    ],
+    "license": "https://spdx.org/licenses/BSD-3-Clause",
+    "name": "Course recommender",
+    "operatingSystem": [
+        "Windows",
+        "Linux"
+    ],
+    "programmingLanguage": "Python",
+    "version": "1",
+    "developmentStatus": "active",
+    "funding": " F-FIDELO-19-008-FLEURY"
+}
