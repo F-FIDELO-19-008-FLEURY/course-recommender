@@ -107,5 +107,6 @@
     "programmingLanguage": "Python",
     "version": "1",
     "developmentStatus": "active",
-    "funding": " F-FIDELO-19-008-FLEURY"
+    "funding": "F-FIDELO-19-008-FLEURY"
+    "softwareRequirements": "https://github.com/ahmedfgad/GeneticAlgorithmPython"
 }
