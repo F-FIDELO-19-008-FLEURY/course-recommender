@@ -98,7 +98,7 @@
         "soft skills",
         "modelling"
     ],
-    "license": "https://spdx.org/licenses/BSD-3-Clause",
+    "license": "https://spdx.org/licenses/CC-BY-4.0",
     "name": "Course recommender",
     "operatingSystem": [
         "Windows",
